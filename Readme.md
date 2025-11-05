@@ -36,7 +36,7 @@ For example:
 7. Check the score or mark to make sure it has the correct format.
    If it looks like “3:1”, read both numbers as the match score.
    If it shows “LIVE” or a minute like “44'”, it means the match is ongoing.
-   If it is “-” or empty, it means the match has not started yet and is only scheduled.
+   If it is “-” it means the match has not started yet and is only scheduled.
 8. Read the stadium if it exists.
 9. If there is no status field, the parser decides it automatically.
     When the score looks like “3:1”, the match is played.
