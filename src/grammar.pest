@@ -5,3 +5,16 @@ score_or_mark = @{
     | ^"live"
     | "-"
 }
+date = @{
+    ASCII_DIGIT{4} ~ "-" ~
+    ( "0" ~ ('1'..'9') | "1" ~ ('0'..'2') ) ~ "-" ~
+    ( "0" ~ ('1'..'9') | ('1'..'2') ~ ASCII_DIGIT | "3" ~ ('0'..'1') )
+}
+time = @{
+    ( "0" ~ ASCII_DIGIT
+    | "1" ~ ASCII_DIGIT
+    | "2" ~ ('0'..'3') )
+    ~ ":"
+    ~ ( "0" ~ ASCII_DIGIT
+    | ('1'..'5') ~ ASCII_DIGIT )
+}
