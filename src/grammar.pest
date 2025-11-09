@@ -1,5 +1,5 @@
-
-score_or_mark = @{
+WHITESPACE = _{ " " | "\t" }
+score_or_mark = {
       ASCII_DIGIT{1,2} ~ ":" ~ ASCII_DIGIT{1,2}
     | ASCII_DIGIT{1,2} ~ ("+" ~ ASCII_DIGIT{1,2})? ~ "'"
     | ^"live"
