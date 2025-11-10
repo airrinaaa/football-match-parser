@@ -18,3 +18,9 @@ time = @{
     ~ ( "0" ~ ASCII_DIGIT
     | ('1'..'5') ~ ASCII_DIGIT )
 }
+SP = @{ " " }
+name_char  = { ASCII_ALPHANUMERIC | "'" | "." | "(" | ")" | "&" }
+team_word  = @{ name_char+ ~ ( "-" ~ name_char+ )* }
+team_name = @{team_word ~ (SP ~ team_word )* ~ &( SP | ( "-" ~ WHITESPACE ) | !ANY )}
+teams = {team_name ~ WHITESPACE* ~ "-" ~ WHITESPACE* ~ team_name
+}
