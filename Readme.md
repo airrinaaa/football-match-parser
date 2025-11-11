@@ -1,4 +1,4 @@
-# Football Match Parser
+___# Football Match Parser
 
 ## Brief Description
 
@@ -48,6 +48,108 @@ For example:
 
 The parser checks for basic errors(wrong date or time format etc.) and logical errors, such as inconsistent match status (for example, a scheduled match with a score, or a played match without the score).
 Also it creates one Match struct for each line. Due to this structure, matches can later be filtered, sorted, or used for counting goals and checking statistics.
+
+### Grammar rules
+```
+WHITESPACE = _{ " " | "\t" }
+score_or_mark = {
+      ASCII_DIGIT{1,3} ~ ":" ~ ASCII_DIGIT{1,3}
+    | ASCII_DIGIT{1,3} ~ ("+" ~ ASCII_DIGIT{1,2})? ~ "'"
+    | ^"live"
+    | "-"
+}
+date = @{
+    ASCII_DIGIT{4} ~ "-" ~
+    ( "0" ~ ('1'..'9') | "1" ~ ('0'..'2') ) ~ "-" ~
+    ( "0" ~ ('1'..'9') | ('1'..'2') ~ ASCII_DIGIT | "3" ~ ('0'..'1') )
+}
+time = @{
+    ( "0" ~ ASCII_DIGIT
+    | "1" ~ ASCII_DIGIT
+    | "2" ~ ('0'..'3') )
+    ~ ":"
+    ~ ( "0" ~ ASCII_DIGIT
+    | ('1'..'5') ~ ASCII_DIGIT )
+}
+SP = @{ " " }
+name_char = { ('a'..'z' | 'A'..'Z' | '0'..'9') | "'" | "." | "(" | ")" | "&" }
+team_word  = @{ name_char+ ~ ( "-" ~ name_char+ )* }
+team_name = @{team_word ~ (SP ~ team_word )* ~ &( SP | ( "-" ~ WHITESPACE ) | ";" | !ANY )}
+teams = {team_name ~ WHITESPACE* ~ "-" ~ WHITESPACE* ~ team_name}
+stadium_name = { name_char+ ~ (SP ~ name_char+)* ~ &( ";" | !ANY ) }
+status = {^"played" | ^"scheduled" | ^"ongoing"}
+match_line = {date ~ ";" ~ time ~ ";" ~ teams ~ ";" ~ score_or_mark
+  ~ (";" ~ stadium_name ~ (";" ~ status)? | ";" ~ status)?
+  ~ !";"
+}
+```
+| Rule           | Meaning (A1)                                                                                                                                                       | Examples                                                                                                                                                            |
+|----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `date`         | The match day. It must look like **YYYY-MM-DD**. The parser checks if the date is real.                                                                            | `2025-11-05`, `2024-02-28`                                                                                                                                          |
+| `time`         | The match start time. It must look like **HH:MM** (24-hour clock). Hours 00–23, minutes 00–59.                                                                     | `17:45`, `09:00`, `23:59`                                                                                                                                           |
+| `team_word`    | A small part of a team name. It can have letters, numbers, `' . ( ) &` and inside hyphens.                                                                         | `PSG`, `Dnipro-1`, `St.`, `Atletico`, `Queen's`, `R.C.D.`                                                                                                           |
+| `team_name`    | The full team name. One or more `team_word` with spaces between them.                                                                                              | `Real Madrid`, `Paris Saint-Germain`, `Atletico Madrid (B)`                                                                                                         |
+| `teams`        | Two team names separated by one dash `-` with one space before and after it.                                                                                       | `PSG - Bayern`, `RealMadrid-Barcelona`, `Metalist 1925 - Dynamo Kyiv`                                                                                               |
+| `score_or_mark`| Shows the score or the current match situation. It can be a score (`2:1`), a minute (`45'`), `live`, or `-`.                                                       | `2:1`, `45'`, `90+3'`, `live`, `-`, `Live`, `120+3'`                                                                                                                |
+| `stadium_name` | Optional. The name of the place where the match is played. Can have letters, spaces, and symbols `' . ( ) &`.                                                      | `Parc des Princes`, `St. Mary's Stadium`, `Dnipro Arena`                                                                                                            |
+| `status`       | Optional. Shows match state — if it was played, is ongoing, or not started yet. It is case-insensitive.                                                            | `played`, `scheduled`, `ongoing`, `ONGOING`                                                                                                                         |
+| `match_line`   | One full record about a football match. All fields go in this order: `date; time; teams; score_or_mark;` then optional `stadium; status`. No extra `;` at the end. | `2025-11-04; 20:00; PSG - Bavaria; 2:1; Parc des Princes`<br>`2025-12-06; 18:00; Kudrivka - Dynamo Kyiv; - ; scheduled`<br>`2025-11-04; 20:00; PSG - Bavaria; live` |
+
+**Notes:**
+
+- The parser ignores extra spaces and tabs between parts.
+
+- No extra `;` at the end.  
+  Invalid line: `2025-12-06; 18:99; Kudrivka - Dynamo Kyiv; - ; scheduled;`
+
+- `stadium` and `status` are optional.  
+  Valid: `date; time; teams; score` (without stadium and status)
+
+- If the word after `;` is `played / scheduled / ongoing` (in any case), it is **status**, not stadium.  
+  For example: `...; - ; PLAYED` → status = `played`, stadium = none
+
+- Teams: must have one space before and after the dash.
+  For example: `PSG-Real Madrid`(invalid line), `PSG - Real Madrid`(valid line)
+
+- Team names can have hyphens inside a word.  
+  Examples: `Dnipro-1`, `Paris Saint-Germain`
+
+- Team and stadium names allow letters, numbers, `' . ( ) &`.  
+  Invalid: `Camp*Nou`, `Dnipro-`, `Arena+`
+
+- Score formats allowed:  
+  `2:1` (numbers), `45'` (minute), `90+3'` (minute + added time), `live`(in any case), `-`, `120+2'`(extra time with added time)
+
+- Spaces around `:` are OK.  
+  For example: `2:1`, `2 : 1`, `2 :   1`
+
+- Minute mark can have spaces around `+`.  
+  For example: `90+3'`, `90 +3'`, `90  +  3'`
+
+- Status is case-insensitive in input.  
+  For example: `played`, `Played`, `PLAYED` → all OK
+
+- Date must be `YYYY-MM-DD` and real (checked with chrono).  
+  Invalid: `2025-13-26`, `2025-02-30`
+
+- Time must be `HH:MM` with 00–23 / 00–59 (checked with rule).  
+  Invalid: `25:00`, `20:75`
+
+- Unknown words in place of status are not allowed as status. They stay as stadium text (if valid).
+
+- Logic checks:
+    - If there is a score like `2:1` → status should be **played**.
+    - If mark is `-` → status should be **scheduled**.
+    - If mark is `live` or `45'` → status should be **ongoing**.
+
+- If the line has a written status, it **must** match the situation:
+    - `2:1, scheduled` → **error** (scheduled cannot have a score)
+    - `- , played` → **error** (played must have a score)
+
+- If status is not written, the parser **infers** it from `score_or_mark`.  
+  For example: `2:1` → `played`; `-` → `scheduled`; `live` or `45'` → `ongoing`
+
+
 
 
 
