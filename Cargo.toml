@@ -3,6 +3,7 @@ name = "football_match_parser"
 description = "Simple parser for reading football match lines(date, time, teams, score, stadium, and status) and converting them into structured data."
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
 
 [dependencies]
 anyhow = "1.0.100"

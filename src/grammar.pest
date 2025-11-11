@@ -3,7 +3,7 @@ WHITESPACE = _{ " " | "\t" }
 /// Score or mark in format: 4:1, 45', 90+3', live, or -
 score_or_mark = {
       ASCII_DIGIT{1,2} ~ ":" ~ ASCII_DIGIT{1,2}
-    | ASCII_DIGIT{1,2} ~ ("+" ~ ASCII_DIGIT{1,2})? ~ "'"
+    | ASCII_DIGIT{1,3} ~ ("+" ~ ASCII_DIGIT{1,2})? ~ "'"
     | ^"live"
     | "-"
 }

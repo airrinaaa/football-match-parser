@@ -53,7 +53,7 @@ Also it creates one Match struct for each line. Due to this structure, matches c
 ```
 WHITESPACE = _{ " " | "\t" }
 score_or_mark = {
-      ASCII_DIGIT{1,3} ~ ":" ~ ASCII_DIGIT{1,3}
+      ASCII_DIGIT{1,2} ~ ":" ~ ASCII_DIGIT{1,2}
     | ASCII_DIGIT{1,3} ~ ("+" ~ ASCII_DIGIT{1,2})? ~ "'"
     | ^"live"
     | "-"
