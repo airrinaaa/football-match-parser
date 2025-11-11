@@ -1,4 +1,4 @@
-___# Football Match Parser
+# Football Match Parser
 
 ## Brief Description
 
