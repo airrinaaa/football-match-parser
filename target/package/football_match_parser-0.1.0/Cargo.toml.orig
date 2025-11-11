@@ -1,0 +1,16 @@
+[package]
+name = "football_match_parser"
+description = "Simple parser for reading football match lines(date, time, teams, score, stadium, and status) and converting them into structured data."
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/airrinaaa/football-match-parser"
+
+[dependencies]
+anyhow = "1.0.100"
+pest = "2.8.3"
+pest_derive = "2.8.3"
+thiserror = "2.0.17"
+clap = { version = "4.5.51", features = ["derive"] }
+chrono = "0.4.42"
