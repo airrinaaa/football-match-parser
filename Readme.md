@@ -1,4 +1,5 @@
 # Football Match Parser
+[![Crates.io](https://img.shields.io/crates/v/football_match_parser.svg)](https://crates.io/crates/football_match_parser)
 
 ## Brief Description
 
