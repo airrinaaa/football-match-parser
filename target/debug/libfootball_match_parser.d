@@ -1,1 +1,0 @@
-/Users/ira/Downloads/practice-iryna-rychok/football\ match\ parser/target/debug/libfootball_match_parser.rlib: /Users/ira/Downloads/practice-iryna-rychok/football\ match\ parser/src/grammar.pest /Users/ira/Downloads/practice-iryna-rychok/football\ match\ parser/src/lib.rs
