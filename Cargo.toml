@@ -4,6 +4,8 @@ description = "Simple parser for reading football match lines(date, time, teams,
 version = "0.1.0"
 edition = "2024"
 license = "MIT"
+readme = "README.md"
+repository = "https://github.com/airrinaaa/football-match-parser"
 
 [dependencies]
 anyhow = "1.0.100"
