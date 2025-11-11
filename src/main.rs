@@ -1,5 +1,5 @@
-use clap::{Parser, Subcommand};
 use anyhow::{Context, Result};
+use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(
@@ -16,9 +16,7 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    Parse {
-        path: String,
-    },
+    Parse { path: String },
     Credits,
 }
 

@@ -1,6 +1,6 @@
-use anyhow::Result; 
-use pest::Parser; 
+use anyhow::Result;
 use football_match_parser::{MatchGrammar, Rule};
+use pest::Parser;
 #[test]
 fn valid_stadium_names() -> Result<()> {
     let valid_stadiums = [
@@ -17,7 +17,7 @@ fn valid_stadium_names() -> Result<()> {
         "Stade de France",
         "Lviv Arena",
     ];
-    for stadium in valid_stadiums{
+    for stadium in valid_stadiums {
         let result = MatchGrammar::parse(Rule::stadium_name, stadium)?;
         assert_eq!(result.as_str(), stadium, "Should accept: {}", stadium);
     }
@@ -34,7 +34,7 @@ fn invalid_stadium_names() {
         "National Arena+",
         "Stadion\nKyiv",
     ];
-    for stadium in invalid_stadiums{
+    for stadium in invalid_stadiums {
         let result = MatchGrammar::parse(Rule::stadium_name, stadium);
         assert!(result.is_err(), "Should reject: {}", stadium);
     }

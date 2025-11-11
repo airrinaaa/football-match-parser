@@ -1,6 +1,6 @@
 use anyhow::Result;
-use pest::Parser;
 use football_match_parser::{MatchGrammar, Rule};
+use pest::Parser;
 
 #[test]
 fn valid_statuses() -> Result<()> {
@@ -15,7 +15,7 @@ fn valid_statuses() -> Result<()> {
         "OngoIng",
         "ONGOING",
     ];
-    for status in valid_statuses{
+    for status in valid_statuses {
         let result = MatchGrammar::parse(Rule::status, status)?;
         assert_eq!(result.as_str(), status, "Should accept: {}", status);
     }
@@ -34,7 +34,7 @@ fn invalid_statuses() {
         "finished",
         "unknown",
     ];
-    for status in invalid_statuses{
+    for status in invalid_statuses {
         let result = MatchGrammar::parse(Rule::status, status);
         assert!(result.is_err(), "Should reject: {}", status);
     }

@@ -1,4 +1,4 @@
-use chrono::{NaiveDate};
+use chrono::NaiveDate;
 use pest::Parser;
 use pest_derive::Parser;
 use thiserror::Error;
@@ -51,7 +51,7 @@ pub fn parse_match_line(line: &str) -> Result<Match, ParseError> {
                     .map_err(|_| ParseError::FieldFormat(format!("Invalid date: {}", field)))?;
                 date = field.to_string();
             }
-            
+
             Rule::time => {
                 let field = pair.as_str().trim();
                 time = field.to_string();
@@ -73,7 +73,6 @@ pub fn parse_match_line(line: &str) -> Result<Match, ParseError> {
                 let field = pair.as_str().trim().to_lowercase();
 
                 if let Some((home, away)) = field.split_once(':') {
-
                     home_score = Some(home.trim().parse().map_err(|_| {
                         ParseError::FieldFormat(format!("Invalid home score: {}", home.trim()))
                     })?);
@@ -104,7 +103,7 @@ pub fn parse_match_line(line: &str) -> Result<Match, ParseError> {
                     stadium = Some(field);
                 }
             }
-            
+
             Rule::status => {
                 if status.is_none() {
                     status = Some(pair.as_str().trim().to_lowercase());
@@ -116,7 +115,7 @@ pub fn parse_match_line(line: &str) -> Result<Match, ParseError> {
     if status.is_none() {
         status = expected_status.clone();
     }
-    validate_logical_mismatch(status.as_deref(), expected_status.as_deref(), )?;
+    validate_logical_mismatch(status.as_deref(), expected_status.as_deref())?;
 
     Ok(Match {
         date,
@@ -130,20 +129,18 @@ pub fn parse_match_line(line: &str) -> Result<Match, ParseError> {
     })
 }
 
-fn validate_logical_mismatch(status: Option<&str>, expected_status: Option<&str>, ) -> Result<(), ParseError> {
-    let final_status = status.clone();
-    if let (Some(expected), Some(actual)) = (expected_status, status) {
-        if expected != actual {
-            return Err(ParseError::Logical(format!(
-                "Status mismatch: expected '{}', but found '{}'",
-                expected, actual
-            )));
-        }
-    }
-    if final_status.is_none() {
-        return Err(ParseError::Logical(
+fn validate_logical_mismatch(
+    status: Option<&str>,
+    expected_status: Option<&str>,
+) -> Result<(), ParseError> {
+    match (expected_status, status) {
+        (None, None) => Err(ParseError::Logical(
             "Cannot determine match status".to_string(),
-        ));
+        )),
+        (Some(expected), Some(actual)) if expected != actual => Err(ParseError::Logical(format!(
+            "Status mismatch: expected '{}', but found '{}'",
+            expected, actual
+        ))),
+        _ => Ok(()),
     }
-    Ok(())
 }
