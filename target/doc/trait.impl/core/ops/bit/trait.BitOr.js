@@ -1,0 +1,9 @@
+(function() {
+    var implementors = Object.fromEntries([["anstyle",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.90.0/core/ops/bit/trait.BitOr.html\" title=\"trait core::ops::bit::BitOr\">BitOr</a> for <a class=\"struct\" href=\"anstyle/struct.Effects.html\" title=\"struct anstyle::Effects\">Effects</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.90.0/core/ops/bit/trait.BitOr.html\" title=\"trait core::ops::bit::BitOr\">BitOr</a>&lt;<a class=\"struct\" href=\"anstyle/struct.Effects.html\" title=\"struct anstyle::Effects\">Effects</a>&gt; for <a class=\"struct\" href=\"anstyle/struct.Style.html\" title=\"struct anstyle::Style\">Style</a>"]]],["pest",[["impl&lt;R: <a class=\"trait\" href=\"pest/trait.RuleType.html\" title=\"trait pest::RuleType\">RuleType</a>&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.90.0/core/ops/bit/trait.BitOr.html\" title=\"trait core::ops::bit::BitOr\">BitOr</a> for <a class=\"struct\" href=\"pest/pratt_parser/struct.Op.html\" title=\"struct pest::pratt_parser::Op\">Op</a>&lt;R&gt;"],["impl&lt;R: <a class=\"trait\" href=\"pest/trait.RuleType.html\" title=\"trait pest::RuleType\">RuleType</a>&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.90.0/core/ops/bit/trait.BitOr.html\" title=\"trait core::ops::bit::BitOr\">BitOr</a> for <a class=\"struct\" href=\"pest/prec_climber/struct.Operator.html\" title=\"struct pest::prec_climber::Operator\">Operator</a>&lt;R&gt;"]]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":57,"fragment_lengths":[627,783]}

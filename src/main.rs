@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 
+///Command-line interface for interacting with the Football Match Parser.
 #[derive(Parser)]
 #[command(
     name = "football_match_parser",

@@ -3,32 +3,52 @@ use pest::Parser;
 use pest_derive::Parser;
 use thiserror::Error;
 
+///Parser for football match lines based on the grammar defined in grammar.pest
 #[derive(Parser)]
 #[grammar = "src/grammar.pest"]
 pub struct MatchGrammar;
 
+///Represents one football match with parsed data from the input line
 #[derive(Debug, PartialEq)]
 pub struct Match {
+    ///The date of the match in YYYY-MM-DD format
     pub date: String,
+    /// The match start time in HH:MM format
     pub time: String,
+    ///The home team name
     pub home_team: String,
+    ///The away team name
     pub away_team: String,
+    ///The home team's score(if the match has already been played)
     pub home_score: Option<u8>,
+    ///The away team's score(if the match has already been played)
     pub away_score: Option<u8>,
+    ///The stadium where the match is taking place
     pub stadium: Option<String>,
+    ///The current status of the match(played, ongoing, scheduled)
     pub status: Option<String>,
 }
 
+///Custom error type
 #[derive(Error, Debug)]
 pub enum ParseError {
+    ///Syntax - when a line doesn't match grammar rules  
     #[error("Syntax error while parsing line: {0}")]
     Syntax(String),
+    ///FieldFormat - when a field has an invalid format(for ex. date doesn't exist)
     #[error("Invalid field format: {0}")]
     FieldFormat(String),
+    ///Logical - when parsed data is logically inconsistent(for ex. wrong match status)
     #[error("Logical inconsistency: {0}")]
     Logical(String),
 }
 
+///Parses one line of football match data into a Match struct.
+///Each line should follow the format:
+///YYYY-MM-DD; HH:MM; HomeTeam - AwayTeam; ScoreOrMark; Stadium(optional); Status(optional)
+///It returns:
+///Ok(Match) if parsing succeeds  
+///Err(ParseError) if syntax, format, or logical errors occur
 pub fn parse_match_line(line: &str) -> Result<Match, ParseError> {
     let pairs = MatchGrammar::parse(Rule::match_line, line)
         .map_err(|_| ParseError::Syntax(format!("Invalid syntax in line: {}", line)))?;
@@ -128,7 +148,7 @@ pub fn parse_match_line(line: &str) -> Result<Match, ParseError> {
         status,
     })
 }
-
+///Validates whether the detected match status matches the expected one.
 fn validate_logical_mismatch(
     status: Option<&str>,
     expected_status: Option<&str>,
