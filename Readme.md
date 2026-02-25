@@ -150,7 +150,15 @@ match_line = {date ~ ";" ~ time ~ ";" ~ teams ~ ";" ~ score_or_mark
 - If status is not written, the parser **infers** it from `score_or_mark`.  
   For example: `2:1` → `played`; `-` → `scheduled`; `live` or `45'` → `ongoing`
 
+### AI Headline Generation (New Feature)
+To make the parsed data more engaging, this tool integrates the **Google Gemini API** (specifically the `gemini-2.5-flash` model).
 
+After successfully parsing a match line, the parser acts as an automated sports editor. It sends the structured `Match` data to the language model to dynamically generate a unique, realistic, and catchy sports news headline (in the style of BBC Sport or ESPN).
+
+**Key highlights of this feature:**
+* **Context-Aware:** The prompts are built using the exact parsed fields (teams, score, stadium, match status).
+* **Graceful Error Handling:** If the API rate limit is reached or the network fails, the parser catches the error, logs it, and safely continues parsing the next lines without crashing.
+* **Optional Execution:** If the `GEMINI_API_KEY` environment variable is not found, the program gracefully skips the AI generation and proceeds with standard text parsing.
 
 
 
